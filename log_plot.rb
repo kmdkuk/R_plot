@@ -1,5 +1,5 @@
 hash = {}
-filename = "あり"
+filename = "0114_ari"
 begin
   File.open("./resources/" + filename + ".log") do |file|
     file.each_line do |l|
@@ -53,15 +53,17 @@ end
 
 Gnuplot.open do |gp|
     Gnuplot::Plot.new(gp) do |plot|
-      plot.title "Delay seen from the server node"
-      plot.xlabel 'time(s)'
+      plot.title "サーバとクライアント間の遅延"
+      plot.xlabel '経過時間(s)'
       plot.xrange   "[-1:21]"
-      plot.ylabel 'delay(ms)'
-      plot.yrange   "[0:11]"
+      plot.ylabel 'サーバとの遅延(ms)'
+      plot.yrange   "[0:10]"
       plot.set "size 1,1"
+      plot.set "key right bottom"
       plot.terminal "png enhanced font 'IPA P ゴシック' fontscale 1.2"
       plot.output "./resources/#{filename}/all.png"
       # plot.set "linestyle 1 linecolor rgbcolor 'orange' linetype 1"
+      i = 0
       hash.each do |ip, timeset|
         x = []
         y = []
@@ -72,9 +74,10 @@ Gnuplot.open do |gp|
         end
         new_x = []
         new_y = []
+        i = i+1
         plot.data << Gnuplot::DataSet.new([x,y]) do |ds|
           ds.with      = "linespoints"  # 点のみなら "points"
-          ds.title = "#{ip}"
+          ds.title = "ノード#{i}"
         end
       end
     end
