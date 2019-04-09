@@ -1,11 +1,16 @@
+require 'fileutils'
 hash = {}
-filename = "0114_ari"
+filename = "041020"
+path = "./resources/#{filename}"
+FileUtils.mkdir_p(path) unless FileTest.exist?(path)
 begin
   File.open("./resources/" + filename + ".log") do |file|
     file.each_line do |l|
       ip = l.match(/(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])/)
+      next if ip == nil
       time =  l.match(/([0-9]*).0ns/)[1]
       second = l.match(/([0-9]*).0ns\Z/)[1]
+        
       if(hash[ip.to_s] == nil)
         hash[ip.to_s] = Hash.new
       end
@@ -25,9 +30,9 @@ hash.each do |ip, timeset|
     Gnuplot::Plot.new(gp) do |plot|
       plot.title "Delay of #{ip} seen from the server node"
       plot.xlabel 'time(s)'
-      plot.xrange   "[-1:21]"
+      plot.xrange   "[-1:110]"
       plot.ylabel 'delay(ms)'
-      plot.yrange   "[0:11]"
+      plot.yrange   "[0:40]"
       plot.set "size 1,1"
       plot.terminal "png enhanced font 'IPA P ゴシック' fontscale 1.2"
       plot.output "./resources/#{filename}/#{ip}.png"
@@ -55,9 +60,9 @@ Gnuplot.open do |gp|
     Gnuplot::Plot.new(gp) do |plot|
       plot.title "サーバとクライアント間の遅延"
       plot.xlabel '経過時間(s)'
-      plot.xrange   "[-1:21]"
+      plot.xrange   "[-1:110]"
       plot.ylabel 'サーバとの遅延(ms)'
-      plot.yrange   "[0:10]"
+      plot.yrange   "[0:40]"
       plot.set "size 1,1"
       plot.set "key right bottom"
       plot.terminal "png enhanced font 'IPA P ゴシック' fontscale 1.2"
